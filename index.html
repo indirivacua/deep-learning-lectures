@@ -21,19 +21,158 @@
 
 class: center, middle
 
-# Title
+# Resumen Deep Learning
 
 ---
 
 # Agenda
 
-1. Introduction
-2. Deep-dive
-3. ...
+1. Conceptos básicos
+2. Regresión Lineal
+   1. Regresión Lineal Simple
+   2. Descenso de Gradiente 1D
+   3. Descenso de Gradiente 2D
+3. Regresión Logística
+4. Redes Neuronales
+5. 
 
 ---
 
-# Introduction
+# Conceptos básicos
+
+* Entrenar modelo (_aprendizaje_): minimizar función de error $E$, de modo de encontrar el mejor valor para nuestros parámetros.
+
+* Normalización Min-Max: $X = (X - X.\text{min}()) / (X.\text{max}() - X.\text{min}())$
+  * Deja todo en un rango de 0 a 1
+
+* Normalización Z-score: $X = (X - X.\text{mean}()) / X.\text{std}()$
+  * No limita el rango de los datos, solo los transforma dejándolos centrados en la media y la desviación estándar en 1
+
+---
+
+class: center, middle
+
+# Regresión Lineal
+
+---
+
+# Regresión Lineal Simple
+
+* Modelo: $ y = f(x) = m \cdot x + b $
+  * Parámetros: $m$ y $b$
+* Función de error: **MSE**
+  * $ E(m,b) = (1/n) \sum\_{i=1}^{n} E\_{i}(m,b) $
+  * $ E\_{i}(m,b) = (y\_{i} - f(x\_{i}))^{2} $
+     * $\text{abs}(\cdot)$ no es derivable
+     * $(\cdot)^{2}$ penaliza errores grandes
+  * Es convexa, forma de parábola con un único mínimo (global)
+
+.rlinear_1d[
+![](img/rlinear_1d.png)
+]
+
+---
+
+## Descenso de Gradiente 1D
+
+.dg_1d[
+![](img/dg_1d.png)
+]
+
+* Algoritmo general, iterativo y escalable
+  * Asunción: $E(w)$ debe ser derivable
+  * Problemas:
+     * Mínimos locales
+     * Determinación del criterio de convergencia (terminación)
+         * $ \delta E(w) / \delta w = 0 $ o $\Delta E\_{\text{epoch+1}}^{\text{epoch}} < \varepsilon$
+  * Funcionamiento:
+     * Se comienza con un parámetro aleatorio para $w=w\_{0}$
+     * **Ecuación fundamental**: $w = w - \alpha \cdot \delta E(w) / \delta w $
+         * $\alpha$ es la tasa de aprendizaje o tamaño del paso
+           * $\alpha << 1$ genera mucha iteraciones
+           * $\alpha >> 1$ puede causar la **divergencia** del algoritmo.
+       * $\delta E(w) / \delta w$ es la dirección y magnitud del cambio hacia donde la función crece
+         * Nos indica la dirección de crecimiento, hay que moverse en **dirección contraria**
+
+---
+
+## Descenso de Gradiente 2D
+
+  * Idem a 1D, pero $E(w\_{1},w\_{2})$ ahora tiene dos parámetros (paraboloide), con 
+     * $w\_{1} = w\_{1} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{1} $
+     * $w\_{2} = w\_{2} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{2} $
+     
+.dg_2d[
+![](img/dg_2d.png)
+]
+
+---
+
+### Cálculo de derivadas para Regresión Lineal
+
+* $\delta E(m,b) / \delta m = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) * x\_{i} $
+* $\delta E(m,b) / \delta b = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) $
+
+### Descenso de Gradiente en Redes Neuronales
+
+* Dependiendo del valor inicial de los parámetros $w\_{i}$, cambiará el resultado final de la convergencia
+   * El error en redes neuronales no es convexo (varios mínimos locales, único mínimo global)
+
+.dg_rn[
+![](img/dg_rn.png)
+]
+
+---
+
+# Parámetros Iniciales y Normalización en Descenso del Gradiente
+
+* Los valores de los parámetros iniciales (ej. $m\_{0}$ y $b\_{0}$), afectan al DG
+* La normalización de la entrada también afecta al DG
+  * Un contorno no es equitativo si los datos no están normalizados
+     * Cambios en $m$ (horizontal) afecta más que en $b$ (vertical)
+  * Conlleva a que implique más iteraciones (malo)
+
+.dg_norm[
+![](img/dg_norm.png)
+]
+
+---
+
+# Regresión Lineal Multivariable (ENTRADA)
+
+* Modelo: $ f(x\_{1},x\_{2},\dots,x\_{n}) = w\_{1} \cdot x\_{1} + w\_{2} \cdot x\_{2} + \cdots + w\_{n} \cdot x\_{n} + b $
+   * Se approxima por un **(hiper)-plano** en lugar de por un recta
+   * El valor de un peso $w\_{i}$ indica la importancia del mismo para la variable de entrada
+* Función de error: **MSE**
+  * $ E(w\_{1},w\_{2},\dots,w\_{n},b) = (1/n) \sum\_{i=1}^{n} E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) $
+  * $ E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) = (y\_{i} - f(x\_{1},x\_{2},\dots,x\_{n}))^{2} $
+* Decenso de Gradiente:
+   * $w\_{1} = w\_{1} - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta w\_{1} $
+   * $w\_{2} = w\_{2} - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta w\_{2} $
+   * $\cdots$
+   * $w\_{n} = w\_{n} - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta w\_{n} $
+   * $b = b - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta b $
+
+.rlinear_2d[
+![](img/rlinear_2d.png)
+]
+
+---
+
+# Regresión Lineal Multivariable (SALIDA)
+
+* Transforma un vector de $N$ elementos en un vector de $M$ elementos
+  * Intuición: combinación de $M$ modelos de RL + cálculo matricial y vectorial
+     * Vector de entrada $x$ de dimensión $N$
+     * Vector de salida $y$ de dimensión $M$
+     * Matriz de pesos $W$ de dimensión $N \times M$
+     * Vector de bias (sesgo) $B$ de dimensión $M$
+* Ejemplo:
+   * $ X = \left [ 3, 10, 9 \right ]$
+   * $W\_{1}=\left [ 1, 2, 3 \right ]$ y $B_{1} = -46$
+   * $W\_{1}=\left [ 4, 5, 6 \right ]$ y $B_{1} = -108$
+
+$$ \left [ 3, 10, 9 \right ] \times  $$
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
@@ -41,5 +180,76 @@ class: center, middle
     <script>
       var slideshow = remark.create();
     </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+              // customised options
+              // • auto-render specific keys, e.g.:
+              delimiters: [
+                  {left: '$$', right: '$$', display: true},
+                  {left: '$', right: '$', display: false},
+                  {left: '\\(', right: '\\)', display: false},
+                  {left: '\\[', right: '\\]', display: true}
+              ],
+              // • rendering keys, e.g.:
+              throwOnError : false,
+              trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
+              macros: {
+                "\\eqref": "\\href{###1}{(\\text{#1})}",
+                "\\ref": "\\href{###1}{\\text{#1}}",
+                "\\label": "\\htmlId{#1}{}"
+              }
+            });
+        });
+    </script>
+    <style>
+      .rlinear_1d{
+        text-align: center;
+        margin:auto;
+      }
+      .rlinear_1d img{
+        width: 60%;
+      }
+      .dg_1d{
+        position: absolute;
+        top: 10px;
+        right: 80px;
+      }
+      .dg_1d img{
+        width: 250px;
+      }
+      .dg_2d{
+        text-align: center;
+        margin:auto;
+      }
+      .dg_2d img{
+        width: 80%;
+      }
+      .dg_rn{
+        text-align: center;
+        margin:auto;
+      }
+      .dg_rn img{
+        width: 70%;
+      }
+      .dg_norm{
+        text-align: center;
+        margin:auto;
+      }
+      .dg_norm img{
+        width: 100%;
+      }
+      .rlinear_2d{
+        position: absolute;
+        bottom: 100px;
+        right: 40px;
+      }
+      .rlinear_2d img{
+        width: 250px;
+      }
+    </style>
   </body>
 </html>
