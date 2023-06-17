@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Title</title>
+    <title>Resumen Deep Learning</title>
     <meta charset="utf-8">
     <style>
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -19,23 +19,15 @@
   <body>
     <textarea id="source">
 
-class: center, middle
+class: center, middle, inverse
 
 # Resumen Deep Learning
+***
 #### Oscar Stanchi
 
----
-
-# Índice
-
-1. Conceptos básicos
-2. Regresión Lineal
-   1. Regresión Lineal Simple
-   2. Descenso de Gradiente 1D
-   3. Descenso de Gradiente 2D
-3. Regresión Logística
-4. Redes Neuronales
-5. 
+.gh_link[
+[github](https://github.com/indirivacua/deep-learning-notes)
+]
 
 ---
 
@@ -49,11 +41,11 @@ class: center, middle
   * Deja todo en un rango de 0 a 1
 
 * Normalización Z-score: $X = (X - X.\text{mean}()) / X.\text{std}()$
-  * No limita el rango de los datos, solo los transforma dejándolos centrados en la media y la desviación estándar en 1
+  * No limita el rango de los datos, solo los transforma dejándolos centrados en la media $\mu$ y la desviación estándar $\sigma$ en 1
 
 ---
 
-class: center, middle
+class: center, middle, inverse
 
 # Regresión Lineal
 
@@ -63,6 +55,7 @@ class: center, middle
 
 * Modelo: $ y = f(x) = m \cdot x + b $
   * Parámetros: $m$ y $b$
+  * Asunción: relación lineal entre $x$ e $y$
 * Función de Error: **MSE**
   * $ E(m,b) = (1/n) \sum\_{i=1}^{n} E\_{i}(m,b) $
   * $ E\_{i}(m,b) = (y\_{i} - f(x\_{i}))^{2} $
@@ -87,21 +80,23 @@ class: center, middle
   * Problemas:
      * Mínimos locales
      * Determinación del criterio de convergencia (terminación)
-         * $ \delta E(w) / \delta w = 0 $ o $ \Delta E\_{\text{epoch+1}}^{\text{epoch}} < \varepsilon $
+         * $ \delta E(w) / \delta w = 0 $ o $ E < \varepsilon $
   * Funcionamiento:
-     * Se comienza con un parámetro aleatorio para $w=w\_{0}$
-     * **Ecuación fundamental**: $ w = w - \alpha \cdot \delta E(w) / \delta w $
+     * Se comienza con un parámetro aleatorio (o sensato) para $w=w\_{0}$
+     * **Ecuación fundamental de cambio**: $ w = w - \alpha \cdot \delta E(w) / \delta w $
          * $\alpha$ es la tasa de aprendizaje o tamaño del paso
            * $\alpha << 1$ genera mucha iteraciones
-           * $\alpha >> 1$ puede causar la **divergencia** del algoritmo.
-       * $\delta E(w) / \delta w$ es la dirección y magnitud del cambio hacia donde la función crece
+           * $\alpha >> 1$ puede causar la **divergencia** del algoritmo
+     * $\delta E(w) / \delta w$ es la dirección y magnitud del cambio hacia donde la función crece
          * Nos indica la dirección de crecimiento, hay que moverse en **dirección contraria**
+     * Se actualiza el parámetro $w$ y se calcula el Error del nuevo valor
 
 ---
 
 ## Descenso de Gradiente 2D
 
-  * Idem a 1D, pero $E(w\_{1},w\_{2})$ ahora tiene dos parámetros (paraboloide)
+* Idem a 1D, pero $E(w\_{1},w\_{2})$ ahora tiene dos parámetros (paraboloide)
+   * $\Delta E = \left ( \delta E / \delta w\_{1}, \delta E / \delta w\_{2} \right )$
      * $ w\_{1} = w\_{1} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{1} $
      * $ w\_{2} = w\_{2} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{2} $
      
@@ -119,10 +114,27 @@ class: center, middle
 ### Descenso de Gradiente en Redes Neuronales
 
 * Dependiendo del valor inicial de los parámetros $w\_{i}$, cambiará el resultado final de la convergencia
-   * El error en redes neuronales no es convexo (varios mínimos locales, único mínimo global)
+   * El Error en redes neuronales no es convexo (varios mínimos locales, único mínimo global)
 
 .dg_rn[
 ![](img/dg_rn.png)
+]
+
+---
+
+## Backpropagation
+
+* **Descenso de Gradiente**
+   * **Algoritmo** de optimización
+
+ 
+* **Backpropagation**
+   * **Técnica** de optimización
+   * Calcula gradientes con respecto a los pesos de una red
+     * Se basa en aplicar derivadas parciales y la regla de la cadena
+
+.backpropagation[
+![](img/backpropagation.png)
 ]
 
 ---
@@ -146,6 +158,7 @@ class: center, middle
 * Modelo: $ y = f(x\_{1},x\_{2},\dots,x\_{n}) = w\_{1} \cdot x\_{1} + w\_{2} \cdot x\_{2} + \cdots + w\_{n} \cdot x\_{n} + b $
    * Se approxima por un **(hiper)-plano** en lugar de por un recta
    * El valor de un peso $w\_{i}$ indica la importancia del mismo para la variable de entrada $x\_{i}$
+     * Notar que un ejemplo $x \in \mathbb{R}^{d}$ cuando antes $ x \in \mathbb{R}$
 * Función de Error: **MSE**
   * $ E(w\_{1},w\_{2},\dots,w\_{n},b) = (1/n) \sum\_{i=1}^{n} E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) $
   * $ E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) = (y\_{i} - f(x\_{1},x\_{2},\dots,x\_{n}))^{2} $
@@ -155,6 +168,8 @@ class: center, middle
    * $\cdots$
    * $w\_{n} = w\_{n} - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta w\_{n} $
    * $b = b - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta b $
+* Cálculo de derivadas para Regresión Lineal:
+   * Tratar a $m$ como $w\_{i}$ y $b$ como $b$ e utilizar las mismas que antes
 
 .rlinear_2d[
 ![](img/rlinear_2d.png)
@@ -181,16 +196,132 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
 
 ---
 
-## Cambio en la Función de Error $\small{E\_{i}}$ 
+## Cambio en la Función de Error $\small{E\_{i}}$
 
 * **Distancia Euclidea al Cuadrado** (_pitágoras_): calcula distancia entre dos puntos en un espacio N-dimensional
    * $E\_{i} = \left ( y\_{i,1} - f\_{1}(x\_{i}) \right ) ^ {2} + \left ( y\_{i,2} - f\_{2}(x\_{i}) \right ) ^ {2}$
      * Existirá un término por cada salida del modelo
-  * La función de error "total" o "promedio" no se ve afectada
+  * La función de Error "total" o "promedio" no se ve afectada
 
 .rlinear_multi_ei[
 ![](img/rlinear_multi_ei.png)
 ]
+
+---
+
+## Épocas y Lotes
+
+* Coste computacional del DG: $O(NP) + O(IP) = O(INP)$
+   * $N$ ejemplos, $P$ parámetros, $I$ iteraciones
+* Solución: dividir los datos en lotes (subconjuntos)
+   * Coste computacional: $O(BP)$ siendo $B$ el número de lotes
+* **Épocas (Epochs)**: cantidad de recorridos completos (_iteraciones_) del dataset en el entrenamiento
+* **Lote (Batch)**: cantidad de ejemplos por época
+  * Iteraciones reales **por epoch**: $N/\text{batch\\_size}$
+  * Iteraciones reales **totales**: $(N/\text{batch\\_size})\cdot\text{epochs}$
+  * Ejemplo: $N=8$, $\text{batch\\_size}=2$ y $\text{epochs}=3$
+     * Iteraciones reales por epoch = 4, totales = 12
+
+.batches_example[
+![](img/batches_example.png)
+]
+
+---
+
+## Descenso de Gradiente Estocástico / Por Lotes / Ruidoso
+
+* DG original ($B=N$): utiliza **todas** las muestras/ejemplos al calcular
+   * Gradientes exactos, no permite escapar de min. locales (si $f$ es convexa garantiza min. global), **lento y no escalable**
+* DGE ($1 < B < N$): utiliza una **muestra** de las muestras ($B$ adecuado)
+   * Gradientes ruidosos, permite escapar de min. locales (no garantiza min. global), **rápido y escalable**
+
+.sgd[
+![](img/sgd.png)
+]
+   
+---
+
+class: center, middle, inverse
+
+# Regresión Logística
+
+---
+
+# Regresión Logística (Clasificación BINARIA)
+
+* **Regresión Logística = Regresión Lineal + Función Logística**
+   * Se aplica la FL (_sigmodea_) a la salida de la RL
+* Función Logística: $\sigma (x) = 1 / \left ( 1 + e^{-x} \right ) $
+   * Dominio: $\left ( -\infty, \infty \right )$
+   * Imagen: $\left [ 0, 1 \right ]$
+   * Derivada sencilla: $\delta \sigma (x) / \delta x = \sigma(x) \left ( 1 - \sigma(x) \right )$
+* Modelo: $f(x)=\sigma(m \cdot x + b) = 1 / \left ( 1 + e^{-m \cdot x - b} \right )$
+   * $m$ cambia la pendiente de la parte lineal
+   * $b$ cambia la ordenada al origen
+* Umbral $u$: permite pasar de un modelo probabilístico a clases (_frontera de decisión_)
+* Funcion de Error: **Entropía Cruzada (BINARIA)**
+   * $E\_{i} = y\_{i} \cdot \left (-\log{\left ( 1 - f(x\_{i} \right )} \right ) +  (1 - y\_{i}) \cdot \left (-\log{\left ( 1 - f(x\_{i} \right )} \right )$
+   * La función de Error "total" o "promedio" no se ve afectada:
+     * $ E(m,b) = (1/n) \sum\_{i=1}^{n} E\_{i}(m,b) $ (ídem RL)
+   * Mide distancia entre distribuciones de probabilidad
+
+.rlogistic[
+![](img/rlogistic.png)
+]
+
+---
+
+## Derivadas de la Entropía Cruzada
+
+* Son CASI idénticas a las de RL (salvo por el "por 2")
+   * $ \delta E(m,b) / \delta m = (1/n) \sum\_{i=1}^{n} (y\_{i} - f(x\_{i})) \cdot x\_{i} $
+   * $ \delta E(m,b) / \delta b = (1/n) \sum\_{i=1}^{n} (y\_{i} - f(x\_{i})) $
+
+## Accuracy
+
+* Accuracy = % de ejemplos que se clasificaron correctamente
+* Ejemplo: N=8, aciertos=4
+   * accuracy=aciertos/N=0.5=50% (promedio de la col. de aciertos)
+   
+.bin_accuracy_example[
+![](img/bin_accuracy_example.png)
+]
+
+---
+
+# Regresión Logística (Clasificación MULTICLASE)
+
+* En lugar de una **Sigmoide** al final de la RL se utiliza una **Softmax**
+  * Tiene como tarea pasar el vector de salida a probabilidades
+
+$$\sigma(Y)\_{i} = \frac{ e^{y\_{i}} }{ \sum\_{j=1}^{N} e^{y\_{j}} }$$
+
+* Notar que $e^{y} > 0 \;\; \forall \;\; y \in Y$, donde además acentúa valores altos
+* Ejemplo: $Y = \left [ 4, 8, 3 \right ]$
+   1. Se aplica la exponencial al resultado de la RL
+      * $Y = \left [ e^{4}, e^{8}, e^{3} \right ]$
+   2. Normalizar $E$ con el valor $N$
+      * $N = e^{4} + e^{8} + e^{3} \\\ \begin{aligned}\text{Softmax} &= \left [ e^{4}/N, e^{8}/N, e^{3}/N \right ] \\\ &= \left[ 0.018, 0.975, 0.007 \right ]\end{aligned}$
+
+---
+
+## Cambio en la Función de Error $\small{E\_{i}}$
+
+* **Entropía Cruzada (Normal)**
+   * $E\_{i} = -\ln \left ( P \left [ \text{clase\\_verdadera} \right ] \right )$
+     * Penaliza la salida de clase verdadera (_true class_)
+        * Si $P \left [ \text{clase\\_verdadera} \right ] < 1$, penaliza
+   * La función de Error "total" o "promedio" no se ve afectada
+
+.rlogistic_multclass_error_example[
+![](img/rlogistic_multclass_error_example.png)
+]
+
+---
+
+class: center, middle, inverse
+
+# Redes Neuronales
 
 ---
 
@@ -226,6 +357,11 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
         });
     </script>
     <style>
+      .gh_link{
+        position: absolute;
+        left: 60px;
+        bottom: 20px;
+      }
       .rlinear_1d{
         text-align: center;
         margin:auto;
@@ -235,18 +371,18 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
       }
       .dg_1d{
         position: absolute;
-        top: 10px;
+        top: 0px;
         right: 80px;
       }
       .dg_1d img{
-        width: 250px;
+        width: 260px;
       }
       .dg_2d{
         text-align: center;
         margin:auto;
       }
       .dg_2d img{
-        width: 80%;
+        width: 70%;
       }
       .dg_rn{
         text-align: center;
@@ -254,6 +390,13 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
       }
       .dg_rn img{
         width: 70%;
+      }
+      .backpropagation{
+        text-align: center;
+        margin:auto;
+      }
+      .backpropagation img{
+        width: 45%;
       }
       .dg_norm{
         text-align: center;
@@ -264,7 +407,7 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
       }
       .rlinear_2d{
         position: absolute;
-        bottom: 100px;
+        bottom: 95px;
         right: 40px;
       }
       .rlinear_2d img{
@@ -276,6 +419,154 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
       }
       .rlinear_multi_ei img{
         width: 50%;
+      }
+      .batches_example{
+        text-align: center;
+        margin:auto;
+      }
+      .batches_example img{
+        width: 75%;
+      }
+      .sgd{
+        text-align: center;
+        margin:auto;
+      }
+      .sgd img{
+        width: 75%;
+      }
+      .rlogistic{
+        position: absolute;
+        bottom: 285px;
+        right: 40px;
+      }
+      .rlogistic img{
+        width: 200px;
+      }
+      .bin_accuracy_example{
+        text-align: center;
+        margin:auto;
+      }
+      .bin_accuracy_example img{
+        width: 30%;
+      }
+      .rlogistic_multclass_error_example{
+        text-align: center;
+        margin:auto;
+      }
+      .rlogistic_multclass_error_example img{
+        width: 100%;
+      }
+    </style>
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif);
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body {
+        font-family: 'Droid Serif';
+      }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      /* .remark-slide-content h1 { font-size: 3em; }
+      .remark-slide-content h2 { font-size: 2em; }
+      .remark-slide-content h3 { font-size: 1.6em; } */
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+      }
+      li p { line-height: 1.25em; }
+      .red { color: #fa0000; }
+      .large { font-size: 2em; }
+      a, a > code {
+        color: rgb(249, 38, 114);
+        text-decoration: none;
+      }
+      code {
+        background: #e7e8e2;
+        border-radius: 5px;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-code-line-highlighted     { background-color: #373832; }
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1, .inverse h2 {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+
+      /* Slide-specific styling */
+      /* #slide-inverse .footnote {
+        bottom: 12px;
+        left: 20px;
+      }
+      #slide-how .slides {
+        font-size: 0.9em;
+        position: absolute;
+        top:  151px;
+        right: 140px;
+      }
+      #slide-how .slides h3 {
+        margin-top: 0.2em;
+      }
+      #slide-how .slides .first, #slide-how .slides .second {
+        padding: 1px 20px;
+        height: 90px;
+        width: 120px;
+        -moz-box-shadow: 0 0 10px #777;
+        -webkit-box-shadow: 0 0 10px #777;
+        box-shadow: 0 0 10px #777;
+      }
+      #slide-how .slides .first {
+        background: #fff;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+      }
+      #slide-how .slides .second {
+        position: relative;
+        background: #fff;
+        z-index: 0;
+      } */
+
+      /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
       }
     </style>
   </body>
