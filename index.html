@@ -22,10 +22,11 @@
 class: center, middle
 
 # Resumen Deep Learning
+#### Oscar Stanchi
 
 ---
 
-# Agenda
+# Índice
 
 1. Conceptos básicos
 2. Regresión Lineal
@@ -41,6 +42,8 @@ class: center, middle
 # Conceptos básicos
 
 * Entrenar modelo (_aprendizaje_): minimizar función de error $E$, de modo de encontrar el mejor valor para nuestros parámetros.
+
+   * Supervisado: se realiza con un conjunto de datos (**dataset**) etiquetado; útil para regresión, clasificación, etc
 
 * Normalización Min-Max: $X = (X - X.\text{min}()) / (X.\text{max}() - X.\text{min}())$
   * Deja todo en un rango de 0 a 1
@@ -60,7 +63,7 @@ class: center, middle
 
 * Modelo: $ y = f(x) = m \cdot x + b $
   * Parámetros: $m$ y $b$
-* Función de error: **MSE**
+* Función de Error: **MSE**
   * $ E(m,b) = (1/n) \sum\_{i=1}^{n} E\_{i}(m,b) $
   * $ E\_{i}(m,b) = (y\_{i} - f(x\_{i}))^{2} $
      * $\text{abs}(\cdot)$ no es derivable
@@ -84,10 +87,10 @@ class: center, middle
   * Problemas:
      * Mínimos locales
      * Determinación del criterio de convergencia (terminación)
-         * $ \delta E(w) / \delta w = 0 $ o $\Delta E\_{\text{epoch+1}}^{\text{epoch}} < \varepsilon$
+         * $ \delta E(w) / \delta w = 0 $ o $ \Delta E\_{\text{epoch+1}}^{\text{epoch}} < \varepsilon $
   * Funcionamiento:
      * Se comienza con un parámetro aleatorio para $w=w\_{0}$
-     * **Ecuación fundamental**: $w = w - \alpha \cdot \delta E(w) / \delta w $
+     * **Ecuación fundamental**: $ w = w - \alpha \cdot \delta E(w) / \delta w $
          * $\alpha$ es la tasa de aprendizaje o tamaño del paso
            * $\alpha << 1$ genera mucha iteraciones
            * $\alpha >> 1$ puede causar la **divergencia** del algoritmo.
@@ -98,9 +101,9 @@ class: center, middle
 
 ## Descenso de Gradiente 2D
 
-  * Idem a 1D, pero $E(w\_{1},w\_{2})$ ahora tiene dos parámetros (paraboloide), con 
-     * $w\_{1} = w\_{1} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{1} $
-     * $w\_{2} = w\_{2} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{2} $
+  * Idem a 1D, pero $E(w\_{1},w\_{2})$ ahora tiene dos parámetros (paraboloide)
+     * $ w\_{1} = w\_{1} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{1} $
+     * $ w\_{2} = w\_{2} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{2} $
      
 .dg_2d[
 ![](img/dg_2d.png)
@@ -110,8 +113,8 @@ class: center, middle
 
 ### Cálculo de derivadas para Regresión Lineal
 
-* $\delta E(m,b) / \delta m = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) * x\_{i} $
-* $\delta E(m,b) / \delta b = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) $
+* $ \delta E(m,b) / \delta m = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) \cdot x\_{i} $
+* $ \delta E(m,b) / \delta b = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) $
 
 ### Descenso de Gradiente en Redes Neuronales
 
@@ -124,13 +127,13 @@ class: center, middle
 
 ---
 
-# Parámetros Iniciales y Normalización en Descenso del Gradiente
+## Parámetros Iniciales y Normalización en Descenso del Gradiente
 
 * Los valores de los parámetros iniciales (ej. $m\_{0}$ y $b\_{0}$), afectan al DG
 * La normalización de la entrada también afecta al DG
   * Un contorno no es equitativo si los datos no están normalizados
      * Cambios en $m$ (horizontal) afecta más que en $b$ (vertical)
-  * Conlleva a que implique más iteraciones (malo)
+  * No normalizar conlleva a que el algoritmo implique más iteraciones
 
 .dg_norm[
 ![](img/dg_norm.png)
@@ -140,10 +143,10 @@ class: center, middle
 
 # Regresión Lineal Multivariable (ENTRADA)
 
-* Modelo: $ f(x\_{1},x\_{2},\dots,x\_{n}) = w\_{1} \cdot x\_{1} + w\_{2} \cdot x\_{2} + \cdots + w\_{n} \cdot x\_{n} + b $
+* Modelo: $ y = f(x\_{1},x\_{2},\dots,x\_{n}) = w\_{1} \cdot x\_{1} + w\_{2} \cdot x\_{2} + \cdots + w\_{n} \cdot x\_{n} + b $
    * Se approxima por un **(hiper)-plano** en lugar de por un recta
-   * El valor de un peso $w\_{i}$ indica la importancia del mismo para la variable de entrada
-* Función de error: **MSE**
+   * El valor de un peso $w\_{i}$ indica la importancia del mismo para la variable de entrada $x\_{i}$
+* Función de Error: **MSE**
   * $ E(w\_{1},w\_{2},\dots,w\_{n},b) = (1/n) \sum\_{i=1}^{n} E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) $
   * $ E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) = (y\_{i} - f(x\_{1},x\_{2},\dots,x\_{n}))^{2} $
 * Decenso de Gradiente:
@@ -161,18 +164,35 @@ class: center, middle
 
 # Regresión Lineal Multivariable (SALIDA)
 
+* Modelo: $Y = F(X) = X \times W + B$
 * Transforma un vector de $N$ elementos en un vector de $M$ elementos
   * Intuición: combinación de $M$ modelos de RL + cálculo matricial y vectorial
-     * Vector de entrada $x$ de dimensión $N$
-     * Vector de salida $y$ de dimensión $M$
+     * Vector de entrada $X$ de dimensión $N$
+     * Vector de salida $Y$ de dimensión $M$
      * Matriz de pesos $W$ de dimensión $N \times M$
+         * Cada columna son los pesos un modelo
      * Vector de bias (sesgo) $B$ de dimensión $M$
-* Ejemplo:
-   * $ X = \left [ 3, 10, 9 \right ]$
-   * $W\_{1}=\left [ 1, 2, 3 \right ]$ y $B_{1} = -46$
-   * $W\_{1}=\left [ 4, 5, 6 \right ]$ y $B_{1} = -108$
+         * Un valor por cada modelo o por cada salida
+* Ejemplo: $ X = \left [ 3, 10, 9 \right ]$, $Y = \left [ f\_{1}(X), f\_{2}(X) \right ]$
+   * RL 1: $W\_{1}=\left [ 1, 2, 3 \right ]$, $B\_{1} = -46$
+   * RL 2: $W\_{1}=\left [ 4, 5, 6 \right ]$, $B\_{1} = -108$
 
-$$ \left [ 3, 10, 9 \right ] \times  $$
+$$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \end{bmatrix} + \left [ -46, -108 \right ] = \left [ 4, 8 \right ]$$
+
+---
+
+## Cambio en la Función de Error $\small{E\_{i}}$ 
+
+* **Distancia Euclidea al Cuadrado** (_pitágoras_): calcula distancia entre dos puntos en un espacio N-dimensional
+   * $E\_{i} = \left ( y\_{i,1} - f\_{1}(x\_{i}) \right ) ^ {2} + \left ( y\_{i,2} - f\_{2}(x\_{i}) \right ) ^ {2}$
+     * Existirá un término por cada salida del modelo
+  * La función de error "total" o "promedio" no se ve afectada
+
+.rlinear_multi_ei[
+![](img/rlinear_multi_ei.png)
+]
+
+---
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
@@ -249,6 +269,13 @@ $$ \left [ 3, 10, 9 \right ] \times  $$
       }
       .rlinear_2d img{
         width: 250px;
+      }
+      .rlinear_multi_ei{
+        text-align: center;
+        margin:auto;
+      }
+      .rlinear_multi_ei img{
+        width: 50%;
       }
     </style>
   </body>
