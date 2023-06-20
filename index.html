@@ -33,12 +33,12 @@ class: center, middle, inverse
 
 # Conceptos básicos
 
-* Entrenar modelo (_aprendizaje_): minimizar función de error $E$, de modo de encontrar el mejor valor para nuestros parámetros.
+* Entrenar modelo (_aprendizaje_): minimizar función de error $E$ (problema de optimización), de modo de encontrar el mejor valor de los parámetros
 
    * Supervisado: se realiza con un conjunto de datos (**dataset**) etiquetado; útil para regresión, clasificación, etc
 
 * Normalización Min-Max: $X = (X - X.\text{min}()) / (X.\text{max}() - X.\text{min}())$
-  * Deja todo en un rango de 0 a 1
+  * Deja los datos en un rango de 0 a 1
 
 * Normalización Z-score: $X = (X - X.\text{mean}()) / X.\text{std}()$
   * No limita el rango de los datos, solo los transforma dejándolos centrados en la media $\mu$ y la desviación estándar $\sigma$ en 1
@@ -54,9 +54,9 @@ class: center, middle, inverse
 # Regresión Lineal Simple
 
 * Modelo: $ y = f(x) = m \cdot x + b $
-  * Parámetros: $m$ y $b$
+  * Parámetros: $m$ y $b$ (pendiente y ordenada al origen)
   * Asunción: relación lineal entre $x$ e $y$
-* Función de Error: **MSE**
+* Función de Error: **Error Cuadrático Medio (MSE)**
   * $ E(m,b) = (1/n) \sum\_{i=1}^{n} E\_{i}(m,b) $
   * $ E\_{i}(m,b) = (y\_{i} - f(x\_{i}))^{2} $
      * $\text{abs}(\cdot)$ no es derivable
@@ -106,7 +106,7 @@ class: center, middle, inverse
 
 ---
 
-### Cálculo de derivadas para Regresión Lineal
+### Cálculo de Derivadas para Regresión Lineal
 
 * $ \delta E(m,b) / \delta m = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) \cdot x\_{i} $
 * $ \delta E(m,b) / \delta b = (1/n) \sum\_{i=1}^{n} 2 \cdot (y\_{i} - f(x\_{i})) $
@@ -158,7 +158,7 @@ class: center, middle, inverse
 * Modelo: $ y = f(x\_{1},x\_{2},\dots,x\_{n}) = w\_{1} \cdot x\_{1} + w\_{2} \cdot x\_{2} + \cdots + w\_{n} \cdot x\_{n} + b $
    * Se approxima por un **(hiper)-plano** en lugar de por un recta
    * El valor de un peso $w\_{i}$ indica la importancia del mismo para la variable de entrada $x\_{i}$
-     * Notar que un ejemplo $x \in \mathbb{R}^{d}$ cuando antes $ x \in \mathbb{R}$
+     * Notar que un ejemplo $x \in \mathbb{R}^{d}$ cuando en RL simple $ x \in \mathbb{R}$
 * Función de Error: **MSE**
   * $ E(w\_{1},w\_{2},\dots,w\_{n},b) = (1/n) \sum\_{i=1}^{n} E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) $
   * $ E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) = (y\_{i} - f(x\_{1},x\_{2},\dots,x\_{n}))^{2} $
@@ -250,14 +250,15 @@ class: center, middle, inverse
 # Regresión Logística (Clasificación BINARIA)
 
 * **Regresión Logística = Regresión Lineal + Función Logística**
-   * Se aplica la FL (_sigmodea_) a la salida de la RL
+   * Se aplica la FL (_sigmoide_) a la salida de la RL
 * Función Logística: $\sigma (x) = 1 / \left ( 1 + e^{-x} \right ) $
    * Dominio: $\left ( -\infty, \infty \right )$
    * Imagen: $\left [ 0, 1 \right ]$
    * Derivada sencilla: $\delta \sigma (x) / \delta x = \sigma(x) \left ( 1 - \sigma(x) \right )$
 * Modelo: $f(x)=\sigma(m \cdot x + b) = 1 / \left ( 1 + e^{-m \cdot x - b} \right )$
    * $m$ cambia la pendiente de la parte lineal
-   * $b$ cambia la ordenada al origen
+   * $b$ mueve la función en el eje de abscisas
+   * MSE no es convexo con éste, la función de Error no será la misma
 * Umbral $u$: permite pasar de un modelo probabilístico a clases (_frontera de decisión_)
 * Funcion de Error: **Entropía Cruzada (BINARIA)**
    * $E\_{i} = y\_{i} \cdot \left (-\log{\left ( 1 - f(x\_{i} \right )} \right ) +  (1 - y\_{i}) \cdot \left (-\log{\left ( 1 - f(x\_{i} \right )} \right )$
@@ -271,7 +272,7 @@ class: center, middle, inverse
 
 ---
 
-## Derivadas de la Entropía Cruzada
+## Cálculo de Derivadas para Regresión Logística
 
 * Son CASI idénticas a las de RL (salvo por el "por 2")
    * $ \delta E(m,b) / \delta m = (1/n) \sum\_{i=1}^{n} (y\_{i} - f(x\_{i})) \cdot x\_{i} $
@@ -301,7 +302,7 @@ $$\sigma(Y)\_{i} = \frac{ e^{y\_{i}} }{ \sum\_{j=1}^{N} e^{y\_{j}} }$$
    1. Se aplica la exponencial al resultado de la RL
       * $Y = \left [ e^{4}, e^{8}, e^{3} \right ]$
    2. Normalizar $E$ con el valor $N$
-      * $N = e^{4} + e^{8} + e^{3} \\\ \begin{aligned}\text{Softmax} &= \left [ e^{4}/N, e^{8}/N, e^{3}/N \right ] \\\ &= \left[ 0.018, 0.975, 0.007 \right ]\end{aligned}$
+      * $N = e^{4} + e^{8} + e^{3} \\\ \begin{aligned}\text{Softmax} &= \left [ e^{4}/N, e^{8}/N, e^{3}/N \right ] \\\ &= \, \left[ 0.018, 0.975, 0.007 \right ]\end{aligned}$
 
 ---
 
