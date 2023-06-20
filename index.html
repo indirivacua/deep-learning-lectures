@@ -314,8 +314,8 @@ $$\sigma(Y)\_{i} = \frac{ e^{y\_{i}} }{ \sum\_{j=1}^{N} e^{y\_{j}} }$$
         * Si $P \left [ \text{clase\\_verdadera} \right ] < 1$, penaliza
    * La función de Error "total" o "promedio" no se ve afectada
 
-.rlogistic_multclass_error_example[
-![](img/rlogistic_multclass_error_example.png)
+.rlogistic_multiclass_error_example[
+![](img/rlogistic_multiclass_error_example.png)
 ]
 
 ---
@@ -325,6 +325,89 @@ class: center, middle, inverse
 # Redes Neuronales
 
 ---
+
+# Red Neuronal para REGRESIÓN
+
+* Los modelos lineales no pueden resolver problemas no-lineales 
+   * Las redes neuronales permiten modelar polinomios complejos
+
+.xor_problem[
+![](img/xor_problem.png)
+]
+
+* Intuición: apilar transformaciones (_capas_) de RL
+   * A mayor cantidad de capas y/o neuronas, más complejo
+   * Arquitecturas: secuenciales (**_feedforward_**) o recursivas (cíclicas)
+
+.nn_topology[
+![](img/nn_topology.png)
+]
+
+---
+
+## `forward`: tamaño de parametros y cálculo de salida
+
+.nn_forward[
+![](img/nn_forward.png)
+]
+
+$$\left ( m \times n \right ) \cdot \left ( n \times p \right ) = \left ( m \times p \right)$$
+
+* El tamaño de B<sub>i</sub> es siempre el tamaño de de columnas de W<sub>i</sub>
+* RL1 recibe tamaño 1x3, por lo que W1=3x?
+   * Elegimos W1=3x4
+* RL2 recibe tamaño 1x4, por lo que W2=4x?
+   * Elegimos W2=4x5
+* RL3 recibe tamaño 1x5, por lo que W3=5x?
+   * Como el modelo decide por 2 salidas, W3=5x2
+* Los valores elegidos son la cantidad de **neuronas** de las **capas ocultas**
+
+---
+
+## Función de Error y Activaciones No-Lineales
+
+* Función de Error: se la considera una capa más, pero no se usa al predecir (diff. e/ `model.train()` vs. `model.eval()`)
+
+.nn_error[
+![](img/nn_error.png)
+]
+
+* **Funciones de Activación No-Lineales**
+   * $N=((X \cdot W_1+B_1) \cdot W_2+B_2) \cdot W_3+B_3=\textcolor{red}{X \cdot W_4+B_4}$
+   * Deben ser derivables: $\text{Sigmoide}(x)$, $\tanh(x)$, $\text{Re\\_LU}(x)$, etc
+
+.act_func[
+![](img/act_func.png)
+]
+
+---
+
+### Aplicación de las Funciones de Activación No-Lineales
+
+* Se las consideran capas SIN parámetros
+   * **No se entrenan**
+* Si `activation=None` entonces es Lineal
+
+.act_func_example[
+![](img/act_func_example.png)
+]
+
+### Ejecución por Lotes
+
+.nn_batches[
+![](img/nn_batches.png)
+]
+
+---
+
+# Red Neuronal para CLASIFICACIÓN
+
+* Se intercambia la última capa (_head_) Lineal por una **Regresión Logística** (`activation=softmax`)
+* El número de neuronas de salida deberá ser igual a la cantidad de clases
+
+.nn_clasification[
+![](img/nn_clasification.png)
+]
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
@@ -450,11 +533,67 @@ class: center, middle, inverse
       .bin_accuracy_example img{
         width: 30%;
       }
-      .rlogistic_multclass_error_example{
+      .rlogistic_multiclass_error_example{
         text-align: center;
         margin:auto;
       }
-      .rlogistic_multclass_error_example img{
+      .rlogistic_multiclass_error_example img{
+        width: 100%;
+      }
+      .xor_problem{
+        text-align: center;
+        margin:auto;
+      }
+      .xor_problem img{
+        width: 75%;
+      }
+      .nn_topology{
+        text-align: center;
+        margin:auto;
+      }
+      .nn_topology img{
+        width: 75%;
+      }
+      .nn_forward{
+        text-align: center;
+        margin:auto;
+      }
+      .nn_forward img{
+        width: 100%;
+      }
+      .nn_error{
+        text-align: center;
+        margin:auto;
+      }
+      .nn_error img{
+        width: 100%;
+      }
+      .act_func{
+        text-align: center;
+        margin:auto;
+      }
+      .act_func img{
+        width: 70%;
+      }
+      .act_func_example{
+        text-align: center;
+        margin:auto;
+      }
+      .act_func_example img{
+        width: 100%;
+      }
+      .nn_batches{
+        text-align: center;
+        margin:auto;
+      }
+      .nn_batches img{
+        width: 80%;
+      }
+      .nn_clasification{
+        text-align: center;
+        margin:auto;
+      }
+      .nn_clasification img{
         width: 100%;
       }
     </style>
@@ -556,8 +695,8 @@ class: center, middle, inverse
 
       /* Two-column layout */
       .left-column {
-        color: #777;
-        width: 20%;
+        /* color: #777; */
+        width: 50%;
         height: 92%;
         float: left;
       }
@@ -565,7 +704,7 @@ class: center, middle, inverse
           color: #000;
         }
       .right-column {
-        width: 75%;
+        width: 50%;
         float: right;
         padding-top: 1em;
       }
