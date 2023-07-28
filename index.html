@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Resumen Deep Learning</title>
+    <title>Deep Dive into Deep Learning</title>
     <meta charset="utf-8">
     <style>
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -21,7 +21,7 @@
 
 class: center, middle, inverse
 
-# Resumen Deep Learning
+# Deep Dive into Deep Learning
 ***
 #### Oscar Stanchi
 
@@ -78,7 +78,7 @@ class: center, middle, inverse
 * Algoritmo general, iterativo y escalable
   * Asunción: $E(w)$ debe ser derivable
   * Problemas:
-     * Mínimos locales
+     * Sensible a mínimos locales
      * Determinación del criterio de convergencia (terminación)
          * $ \delta E(w) / \delta w = 0 $ o $ E < \varepsilon $
   * Funcionamiento:
@@ -99,7 +99,7 @@ class: center, middle, inverse
    * $\Delta E = \left ( \delta E / \delta w\_{1}, \delta E / \delta w\_{2} \right )$
      * $ w\_{1} = w\_{1} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{1} $
      * $ w\_{2} = w\_{2} - \alpha \cdot \delta E(w\_{1},w\_{2}) / \delta w\_{2} $
-     
+
 .dg_2d[
 ![](img/dg_2d.png)
 ]
@@ -127,7 +127,7 @@ class: center, middle, inverse
 * **Descenso de Gradiente**
    * **Algoritmo** de optimización
 
- 
+
 * **Backpropagation**
    * **Técnica** de optimización
    * Calcula gradientes con respecto a los pesos de una red
@@ -156,13 +156,13 @@ class: center, middle, inverse
 # Regresión Lineal Multivariable (ENTRADA)
 
 * Modelo: $ y = f(x\_{1},x\_{2},\dots,x\_{n}) = w\_{1} \cdot x\_{1} + w\_{2} \cdot x\_{2} + \cdots + w\_{n} \cdot x\_{n} + b $
-   * Se approxima por un **(hiper)-plano** en lugar de por un recta
+   * Se aproxima por un **(hiper)-plano** <!--en $\mathbb{R}^{n}$--> en lugar de por un recta
    * El valor de un peso $w\_{i}$ indica la importancia del mismo para la variable de entrada $x\_{i}$
-     * Notar que un ejemplo $x \in \mathbb{R}^{d}$ cuando en RL simple $ x \in \mathbb{R}$
+     * Notar que un ejemplo $x \in \mathbb{R}^{n}$ cuando en RL simple $ x \in \mathbb{R}$
 * Función de Error: **MSE**
   * $ E(w\_{1},w\_{2},\dots,w\_{n},b) = (1/n) \sum\_{i=1}^{n} E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) $
   * $ E\_{i}(w\_{1},w\_{2},\cdots,w\_{n},b) = (y\_{i} - f(x\_{1},x\_{2},\dots,x\_{n}))^{2} $
-* Decenso de Gradiente:
+* Descenso de Gradiente:
    * $w\_{1} = w\_{1} - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta w\_{1} $
    * $w\_{2} = w\_{2} - \alpha \cdot \delta  E(w\_{1},w\_{2},\dots,w\_{n},b) / \delta w\_{2} $
    * $\cdots$
@@ -185,7 +185,8 @@ class: center, middle, inverse
      * Vector de entrada $X$ de dimensión $N$
      * Vector de salida $Y$ de dimensión $M$
      * Matriz de pesos $W$ de dimensión $N \times M$
-         * Cada columna son los pesos un modelo
+         * Cada columna son los pesos de un modelo
+         <!-- * Tantas filas como ~~hiperplanos~~ variables de entrada, tantas columnas como variables de salida -->
      * Vector de bias (sesgo) $B$ de dimensión $M$
          * Un valor por cada modelo o por cada salida
 * Ejemplo: $ X = \left [ 3, 10, 9 \right ]$, $Y = \left [ f\_{1}(X), f\_{2}(X) \right ]$
@@ -228,7 +229,7 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
 
 ---
 
-## Descenso de Gradiente Estocástico / Por Lotes / Ruidoso
+### Descenso de Gradiente Estocástico / Por Lotes / Ruidoso
 
 * DG original ($B=N$): utiliza **todas** las muestras/ejemplos al calcular
    * Gradientes exactos, no permite escapar de min. locales (si $f$ es convexa garantiza min. global), **lento y no escalable**
@@ -238,7 +239,14 @@ $$ \left [ 3, 10, 9 \right ] \times \begin{bmatrix} 1 & 4 \\\ 2 & 5 \\\ 3 & 6 \e
 .sgd[
 ![](img/sgd.png)
 ]
-   
+
+* SGD vs. Momemtum vs. Adagrad vs. Adam
+   * Algunos logran escapar de mínimos locales
+
+.opt_anim[
+![](img/opt_anim.gif)
+]
+
 ---
 
 class: center, middle, inverse
@@ -251,16 +259,17 @@ class: center, middle, inverse
 
 * **Regresión Logística = Regresión Lineal + Función Logística**
    * Se aplica la FL (_sigmoide_) a la salida de la RL
-* Función Logística: $\sigma (x) = 1 / \left ( 1 + e^{-x} \right ) $
+* Función Logística: $\sigma (x) = 1 / \left ( 1 + e^{-x} \right ) =  P(y=1 \mid x; w)$
    * Dominio: $\left ( -\infty, \infty \right )$
    * Imagen: $\left [ 0, 1 \right ]$
    * Derivada sencilla: $\delta \sigma (x) / \delta x = \sigma(x) \left ( 1 - \sigma(x) \right )$
 * Modelo: $f(x)=\sigma(m \cdot x + b) = 1 / \left ( 1 + e^{-m \cdot x - b} \right )$
+   * **Interpretación de la salida como probabilidad**
    * $m$ cambia la pendiente de la parte lineal
    * $b$ mueve la función en el eje de abscisas
    * MSE no es convexo con éste, la función de Error no será la misma
 * Umbral $u$: permite pasar de un modelo probabilístico a clases (_frontera de decisión_)
-* Funcion de Error: **Entropía Cruzada (BINARIA)**
+* Función de Error: **Entropía Cruzada (BINARIA)**
    * $E\_{i} = y\_{i} \cdot \left (-\log{\left ( 1 - f(x\_{i} \right )} \right ) +  (1 - y\_{i}) \cdot \left (-\log{\left ( 1 - f(x\_{i} \right )} \right )$
    * La función de Error "total" o "promedio" no se ve afectada:
      * $ E(m,b) = (1/n) \sum\_{i=1}^{n} E\_{i}(m,b) $ (ídem RL)
@@ -281,28 +290,55 @@ class: center, middle, inverse
 ## Accuracy
 
 * Accuracy = % de ejemplos que se clasificaron correctamente
+   * $\text{Acc} = (1/n) \sum\_{i=1}^{n}\left ( {y\_{i}}' - y\_{i} \right )$
 * Ejemplo: N=8, aciertos=4
    * accuracy=aciertos/N=0.5=50% (promedio de la col. de aciertos)
-   
+
 .bin_accuracy_example[
 ![](img/bin_accuracy_example.png)
 ]
 
 ---
 
+## Codificación One-Hot vs. Etiquetas
+
+* Su diferencia principal recae en el tamaño del vector $Y$ de _labels / target_
+   * One-Hot: $N \times C$
+   * Etiquetas: $N \times 1$
+       * Implica un orden en los resultados (no es buena práctica)
+
+.onehot_labels[
+![](img/onehot_labels.png)
+]
+
+---
+
+.rlogistic_title_fix[
 # Regresión Logística (Clasificación MULTICLASE)
+]
 
 * En lugar de una **Sigmoide** al final de la RL se utiliza una **Softmax**
   * Tiene como tarea pasar el vector de salida a probabilidades
 
-$$\sigma(Y)\_{i} = \frac{ e^{y\_{i}} }{ \sum\_{j=1}^{N} e^{y\_{j}} }$$
+$$\sigma(Y)\_{i} = \frac{ e^{y\_{i}} }{ \sum\_{j=1}^{m} e^{y\_{j}} }$$
 
 * Notar que $e^{y} > 0 \;\; \forall \;\; y \in Y$, donde además acentúa valores altos
 * Ejemplo: $Y = \left [ 4, 8, 3 \right ]$
    1. Se aplica la exponencial al resultado de la RL
-      * $Y = \left [ e^{4}, e^{8}, e^{3} \right ]$
+      * $E = \left [ e^{4}, e^{8}, e^{3} \right ]$
    2. Normalizar $E$ con el valor $N$
       * $N = e^{4} + e^{8} + e^{3} \\\ \begin{aligned}\text{Softmax} &= \left [ e^{4}/N, e^{8}/N, e^{3}/N \right ] \\\ &= \, \left[ 0.018, 0.975, 0.007 \right ]\end{aligned}$
+* Notar que $ 0 < \text{Softmax}_{i} < 1$, además que $\sum \text{Softmax} = 1$
+* El umbral (if f(x) > u then 1 else 0) es reemplazado por `argmax(softmax(Y))`
+
+<!-- ---
+
+## Propiedades de la función Softmax
+
+
+.softmax_example[
+![](img/softmax_example.png)
+] -->
 
 ---
 
@@ -328,7 +364,7 @@ class: center, middle, inverse
 
 # Red Neuronal para REGRESIÓN
 
-* Los modelos lineales no pueden resolver problemas no-lineales 
+* Los modelos lineales no pueden resolver problemas no-lineales
    * Las redes neuronales permiten modelar polinomios complejos
 
 .xor_problem[
@@ -345,7 +381,7 @@ class: center, middle, inverse
 
 ---
 
-## `forward`: tamaño de parametros y cálculo de salida
+## `forward`: tamaño de parámetros y cálculo de salida
 
 .nn_forward[
 ![](img/nn_forward.png)
@@ -408,6 +444,11 @@ $$\left ( m \times n \right ) \cdot \left ( n \times p \right ) = \left ( m \tim
 .nn_clasification[
 ![](img/nn_clasification.png)
 ]
+
+## RN y Modelos Lineales
+
+<br>
+**<center>Redes Neuronales = Regresión Lineal/Logística + Funciones de Activación</center>**
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
@@ -480,7 +521,7 @@ $$\left ( m \times n \right ) \cdot \left ( n \times p \right ) = \left ( m \tim
         margin:auto;
       }
       .backpropagation img{
-        width: 45%;
+        width: 40%;
       }
       .dg_norm{
         text-align: center;
@@ -516,11 +557,19 @@ $$\left ( m \times n \right ) \cdot \left ( n \times p \right ) = \left ( m \tim
         margin:auto;
       }
       .sgd img{
-        width: 75%;
+        width: 70%;
+      }
+      .opt_anim{
+        position: absolute;
+        bottom: 0px;
+        right: 70px;
+      }
+      .opt_anim img{
+        width: 250px;
       }
       .rlogistic{
         position: absolute;
-        bottom: 285px;
+        bottom: 250px;
         right: 40px;
       }
       .rlogistic img{
@@ -532,6 +581,23 @@ $$\left ( m \times n \right ) \cdot \left ( n \times p \right ) = \left ( m \tim
       }
       .bin_accuracy_example img{
         width: 30%;
+      }
+      .rlogistic_title_fix{
+        margin-right: -20px;
+      }
+      .onehot_labels{
+        text-align: center;
+        margin:auto;
+      }
+      .onehot_labels img{
+        width: 100%;
+      }
+      .softmax_example{
+        text-align: center;
+        margin:auto;
+      }
+      .softmax_example img{
+        width: 100%;
       }
       .rlogistic_multiclass_error_example{
         text-align: center;
